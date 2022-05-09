@@ -8,7 +8,12 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.retrytopic.RetryTopicConfiguration;
+import org.springframework.kafka.retrytopic.RetryTopicConfigurationBuilder;
+import org.springframework.kafka.retrytopic.TopicSuffixingStrategy;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,5 +40,16 @@ public class KafkaConsumerConfig {
         factory.setConsumerFactory(consumerFactory());
 
         return factory;
+    }
+
+    @Bean
+    public RetryTopicConfiguration myRetryableTopic(KafkaTemplate<String, String> kafkaTemplate) {
+        return RetryTopicConfigurationBuilder
+                .newInstance()
+                .fixedBackOff(3000)
+                .maxAttempts(3)
+                .setTopicSuffixingStrategy(TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE)
+                .includeTopics(Collections.singletonList("greetings"))
+                .create(kafkaTemplate);
     }
 }

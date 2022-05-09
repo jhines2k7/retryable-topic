@@ -51,11 +51,11 @@ public class KafkaProducerController {
         });
     }
 
-    @RetryableTopic(
-            attempts = "3",
-            backoff = @Backoff(delay = 1000, multiplier = 2.0),
-            autoCreateTopics = "false",
-            topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE)
+//    @RetryableTopic(
+//            attempts = "3",
+//            backoff = @Backoff(delay = 1000, multiplier = 2.0),
+//            autoCreateTopics = "false",
+//            topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE)
     @KafkaListener(topics = "greetings", groupId = "greetingGroup")
     public void listenGreetingGroup(String message) throws Exception{
         if(message.contains("Casey")) {
