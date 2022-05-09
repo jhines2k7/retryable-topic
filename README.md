@@ -1,9 +1,9 @@
 # retryable-topic
 
-Simple Spring Boot application to demonstrate the use of the RetryTopicConfigurer available in spring-kafka:2.7+.
-The application demonstrates using the *@RetryableTopic* annotation on any consumer listener methods as well as 
-configuring the *RetryTopicConfigurationBuilder* so that any method that uses the *@KafkaListener* annotation will use 
-the settings defined in the configuration bean.In order to run the application, you will need to connect to 
+Simple Spring Boot application to demonstrate the use of the ***RetryTopicConfigurer*** available in spring-kafka:2.7+.
+The application demonstrates using the ***@RetryableTopic*** annotation on a consumer listener method as well as 
+configuring the ***RetryTopicConfigurationBuilder*** so that any method that uses the ***@KafkaListener*** annotation will use 
+the settings defined in the configuration bean. In order to run the application, you will need to connect to 
 a Kafka cluster and create a topic called "greetings"
 ```
 bin/kafka-topics.sh --create --topic greetings --bootstrap-server localhost:9092
