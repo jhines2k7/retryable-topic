@@ -43,7 +43,7 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public RetryTopicConfiguration myRetryableTopic(KafkaTemplate<String, String> kafkaTemplate) {
+    public RetryTopicConfiguration greetingsRetryableTopic(KafkaTemplate<String, String> kafkaTemplate) {
         return RetryTopicConfigurationBuilder
                 .newInstance()
                 .fixedBackOff(3000)
