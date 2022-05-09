@@ -65,6 +65,16 @@ public class KafkaProducerController {
         log.info("Received message in group greetingGroup: {}", message);
     }
 
+    @KafkaListener(topics = "greetings-retry-0", groupId = "greetingGroup")
+    public void listenGreetingsRetry0(String message) throws Exception{
+        log.info("Unprocessable message sent to retry topic greetings-retry-0: {}", message);
+    }
+
+    @KafkaListener(topics = "greetings-retry-1", groupId = "greetingGroup")
+    public void listenGreetingsRetry1(String message) throws Exception{
+        log.info("Unprocessable message sent to retry topic greetings-retry-1: {}", message);
+    }
+
     @DltHandler
     public void processMessage(String message) {
         log.error("Received unprocessable message from greetingGroup: {}", message);
