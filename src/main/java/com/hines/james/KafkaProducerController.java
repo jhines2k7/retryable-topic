@@ -2,9 +2,13 @@ package com.hines.james;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.retrytopic.TopicSuffixingStrategy;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +34,7 @@ public class KafkaProducerController {
     }
 
     private void sendMessage(String message) {
-        ListenableFuture<SendResult<String, String>> future =
-                kafkaTemplate.send("greetings", message);
+        ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send("greetings", message);
 
         future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
 
@@ -48,8 +51,22 @@ public class KafkaProducerController {
         });
     }
 
+    @RetryableTopic(
+            attempts = "3",
+            backoff = @Backoff(delay = 1000, multiplier = 2.0),
+            autoCreateTopics = "false",
+            topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE)
     @KafkaListener(topics = "greetings", groupId = "greetingGroup")
-    public void listenGreetingGroup(String message) {
+    public void listenGreetingGroup(String message) throws Exception{
+        if(message.contains("Casey")) {
+            throw new Exception("Exception thrown while processing message: " + message);
+        }
+
         log.info("Received message in group greetingGroup: {}", message);
+    }
+
+    @DltHandler
+    public void processMessage(String message) {
+        log.error("Received unprocessable message from greetingGroup: {}", message);
     }
 }
